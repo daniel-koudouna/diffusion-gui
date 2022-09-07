@@ -1,0 +1,30 @@
+version: '3.5'
+
+services:
+  model: 
+    build: 
+      context: .
+      dockerfile: ./Dockerfile.model
+    expose:
+      - "5000"
+    networks:
+      - model-subnet
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+  cors:
+    build: 
+      context: .
+      dockerfile: ./Dockerfile.nginx
+    container_name: cors
+    ports:
+      - "5000:5000"
+    networks:
+      - model-subnet
+
+networks:
+  model-subnet:
